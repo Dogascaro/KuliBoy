@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Penghitung Gaji Modern</title>
+        <style>
+            /* Reset dan font */
+            @keyframes slideInOutLoop {
+                0% {
+                    transform: translateX(-100%);
+                    opacity: 0;
+                }
+                10% {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                90% {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+
+            .animated-heading-loop {
+                animation: slideInOutLoop 8s ease-in-out infinite;
+                text-align: center;
+                position: relative;
+                font-size: 1.5rem;
+                margin: 1rem 0;
+            }P
+            .animated-heading {
+                animation: slideInOut 8s ease-in-out forwards;
+                text-align: center;
+                position: relative;
+                font-size: 1.5rem;
+                margin: 1rem 0;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                background: #f9fafb;
+                margin: 0;
+                padding: 20px;
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
+                color: #222;
+            }
+
+            h2 {
+                text-align: center;
+                color: #1e3a8a;
+                margin-bottom: 5px;
+            }
+
+            p {
+                text-align: center;
+                font-size: 0.9rem;
+                color: #555;
+                margin-top: 0;
+                margin-bottom: 20px;
+            }
+
+            /* Form area */
+            #formHari {
+                margin-bottom: 15px;
+            }
+
+            .day-entry {
+                background: #fff;
+                border-radius: 8px;
+                padding: 12px 15px;
+                margin-bottom: 12px;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+            }
+
+            .day-entry label {
+                flex: 1 1 40%;
+                font-weight: 600;
+                font-size: 1rem;
+                color: #334155;
+            }
+
+            .day-entry input[type="number"] {
+                flex: 1 1 40%;
+                padding: 8px 10px;
+                border: 1.5px solid #cbd5e1;
+                border-radius: 6px;
+                font-size: 1rem;
+                transition: border-color 0.3s;
+            }
+            .day-entry input[type="number"]:focus {
+                outline: none;
+                border-color: #3b82f6;
+                box-shadow: 0 0 6px #93c5fd;
+            }
+
+            .remove-btn {
+                background: #ef4444;
+                border: none;
+                border-radius: 6px;
+                color: white;
+                font-weight: 600;
+                padding: 6px 12px;
+                cursor: pointer;
+                flex-shrink: 0;
+                transition: background-color 0.3s;
+            }
+            .remove-btn:hover {
+                background: #b91c1c;
+            }
+
+            /* Input tambah hari dan tombol */
+            #namaHariBaru {
+                width: calc(100% - 120px);
+                padding: 10px 12px;
+                font-size: 1rem;
+                border: 1.5px solid #cbd5e1;
+                border-radius: 8px;
+                margin-right: 10px;
+                transition: border-color 0.3s;
+            }
+            #namaHariBaru:focus {
+                outline: none;
+                border-color: #3b82f6;
+                box-shadow: 0 0 6px #93c5fd;
+            }
+
+            button {
+                background: #2563eb;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 12px 16px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+            button:hover {
+                background: #1d4ed8;
+            }
+            button:disabled {
+                background: #93c5fd;
+                cursor: not-allowed;
+            }
+
+            .btn-hitung {
+                width: 100%;
+                margin-top: 15px;
+                margin-bottom: 30px;
+            }
+
+            /* Hasil dan riwayat */
+            .hasil,
+            .riwayat {
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 1px 6px rgb(0 0 0 / 0.1);
+                color: #1e293b;
+                font-size: 1rem;
+                line-height: 1.4;
+            }
+
+            /* Riwayat */
+            .riwayat-item {
+                font-family: monospace;
+                border: 1px solid #cbd5e1;
+                border-radius: 8px;
+                padding: 14px 15px;
+                margin-bottom: 15px;
+                cursor: pointer;
+                background: #f9fafb;
+                position: relative;
+                transition: background-color 0.2s;
+                user-select: none;
+            }
+            .riwayat-item:hover {
+                background: #e0e7ff;
+            }
+
+            .riwayat-header {
+                font-weight: 700;
+                font-size: 1.1rem;
+                color: #1e40af;
+            }
+
+            .riwayat-detail {
+                margin-top: 12px;
+                white-space: pre-line;
+                font-size: 0.9rem;
+                display: none;
+                color: #334155;
+                border-top: 1px solid #cbd5e1;
+                padding-top: 10px;
+            }
+
+            .riwayat-item.active .riwayat-detail {
+                display: block;
+            }
+
+            /* Tombol hapus riwayat */
+            /* Tombol hapus riwayat yang lebih kecil dan fleksibel */
+            .hapus-riwayat-btn {
+                position: absolute;
+                right: 8px;
+                top: 8px;
+                background: rgba(239, 68, 68, 0.6);
+                border: none;
+                border-radius: 50%;
+                color: white;
+                font-weight: 700;
+                font-size: 0.7rem;
+                padding: 4px 7px;
+                cursor: pointer;
+                opacity: 0.3;
+                transition:
+                    opacity 0.3s,
+                    background-color 0.3s;
+                z-index: 5;
+                line-height: 1;
+            }
+            .hapus-riwayat-btn:hover {
+                opacity: 1;
+                background: rgba(239, 68, 68, 1);
+            }
+        </style>
+    </head>
+    <body>
+        <!-- <h2 class="animated-headi><KuliBoy</h2> -->
+        <h2 class="animated-heading-loop">KuliBoy</h2>
+        <!-- <p>
+            <strong>Ketentuan:</strong><br />
+            - Gaji Pokok per hari = Rp130.000<br />
+            - Upah lembur per jam = Rp20.000
+        </p> -->
+
+        <br />
+        <br />
+        <div id="formHari"></div>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap">
+            <input
+                type="text"
+                id="namaHariBaru"
+                placeholder="Nama hari baru (misal: Minggu Malam)"
+            />
+            <button onclick="tambahHari()">+ Tambah Hari</button>
+        </div>
+
+        <button class="btn-hitung" onclick="hitungGaji()">Hitung Gaji</button>
+
+        <div class="hasil" id="hasilGaji"></div>
+
+        <h3>Riwayat Hitungan Gaji:</h3>
+        <div class="riwayat" id="riwayatGaji"></div>
+
+        <script>
+            const formHari = document.getElementById("formHari");
+            const gajiPokokPerHari = 130000;
+            const upahLemburPerJam = 20000;
+
+            let hariData = JSON.parse(localStorage.getItem("hariData")) || [
+                { nama: "Minggu", lembur: 0 },
+                { nama: "Senin", lembur: 0 },
+                { nama: "Selasa", lembur: 0 },
+                { nama: "Rabu", lembur: 0 },
+                { nama: "Kamis", lembur: 0 },
+                { nama: "Jumat", lembur: 0 },
+                { nama: "Sabtu", lembur: 0 }
+            ];
+
+            let riwayat = JSON.parse(localStorage.getItem("riwayatGaji")) || [];
+
+            function simpanData() {
+                localStorage.setItem("hariData", JSON.stringify(hariData));
+            }
+
+            function simpanRiwayatBaru(entry) {
+                riwayat.unshift(entry);
+                localStorage.setItem("riwayatGaji", JSON.stringify(riwayat));
+                renderRiwayat();
+            }
+
+            function renderHari() {
+                formHari.innerHTML = "";
+                hariData.forEach((item, index) => {
+                    const div = document.createElement("div");
+                    div.className = "day-entry";
+                    div.innerHTML = `
+          <label>${item.nama}</label>
+          <input type="number" min="0" placeholder="Jam lembur" value="${item.lembur}" onchange="updateLembur(${index}, this.value)" />
+          <button class="remove-btn" onclick="hapusHari(${index})" title="Hapus hari ini">×</button>
+        `;
+                    formHari.appendChild(div);
+                });
+            }
+
+            function tambahHari() {
+                const nama = document
+                    .getElementById("namaHariBaru")
+                    .value.trim();
+                if (nama === "") {
+                    alert("Nama hari tidak boleh kosong!");
+                    return;
+                }
+                hariData.push({ nama, lembur: 0 });
+                simpanData();
+                renderHari();
+                document.getElementById("namaHariBaru").value = "";
+            }
+
+            function hapusHari(index) {
+                if (confirm("Yakin ingin menghapus hari ini?")) {
+                    hariData.splice(index, 1);
+                    simpanData();
+                    renderHari();
+                }
+            }
+
+            function updateLembur(index, value) {
+                hariData[index].lembur = parseFloat(value) || 0;
+                simpanData();
+            }
+
+            function hitungGaji() {
+                if (hariData.length === 0) {
+                    alert("Belum ada hari kerja. Tambahkan hari dulu.");
+                    return;
+                }
+
+                const totalHari = hariData.length;
+                const totalJamLembur = hariData.reduce(
+                    (sum, h) => sum + (parseFloat(h.lembur) || 0),
+                    0
+                );
+                const gajiPokok = totalHari * gajiPokokPerHari;
+                const gajiLembur = totalJamLembur * upahLemburPerJam;
+                const totalGaji = gajiPokok + gajiLembur;
+
+                const now = new Date();
+                const tanggal = now.toLocaleDateString("id-ID", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                });
+
+                const hasil = `
+        <strong>Hasil Perhitungan (${tanggal}):</strong><br>
+        Jumlah hari kerja: ${totalHari}<br>
+        Total jam lembur: ${totalJamLembur} jam<br>
+        Gaji Pokok: Rp ${gajiPokok.toLocaleString()}<br>
+        Gaji Lembur: Rp ${gajiLembur.toLocaleString()}<br>
+        <strong>Total Gaji: Rp ${totalGaji.toLocaleString()}</strong>
+      `;
+
+                document.getElementById("hasilGaji").innerHTML = hasil;
+
+                simpanRiwayatBaru({
+                    tanggal,
+                    totalHari,
+                    totalJamLembur,
+                    gajiPokok,
+                    gajiLembur,
+                    totalGaji
+                });
+            }
+
+            function renderRiwayat() {
+                const riwayatDiv = document.getElementById("riwayatGaji");
+                riwayatDiv.innerHTML = "";
+                if (riwayat.length === 0) {
+                    riwayatDiv.innerHTML = "<i>Belum ada riwayat.</i>";
+                    return;
+                }
+
+                riwayat.forEach((item, i) => {
+                    const div = document.createElement("div");
+                    div.className = "riwayat-item";
+                    div.innerHTML = `
+          <div class="riwayat-header">#${i + 1} - ${item.tanggal}</div>
+          <button class="hapus-riwayat-btn" title="Hapus riwayat" onclick="hapusRiwayat(${i}, event)">×</button>
+          <div class="riwayat-detail">
+            ------------------------------<br>
+            STRUK HITUNGAN GAJI<br>
+            ------------------------------<br>
+            Hari Kerja  : ${item.totalHari}<br>
+            Jam Lembur  : ${item.totalJamLembur} jam<br>
+            ------------------------------<br>
+            Gaji Pokok  : Rp ${item.gajiPokok.toLocaleString()}<br>
+            Gaji Lembur : Rp ${item.gajiLembur.toLocaleString()}<br>
+            ------------------------------<br>
+            TOTAL GAJI  : Rp ${item.totalGaji.toLocaleString()}<br>
+            ------------------------------
+          </div>
+        `;
+
+                    // Toggle detail saat klik header atau area kecuali tombol hapus
+                    div.addEventListener("click", e => {
+                        if (e.target.classList.contains("hapus-riwayat-btn"))
+                            return;
+                        div.classList.toggle("active");
+                    });
+
+                    riwayatDiv.appendChild(div);
+                });
+            }
+
+            function hapusRiwayat(index, event) {
+                event.stopPropagation(); // supaya tidak toggle detail saat klik hapus
+                if (confirm("Yakin ingin menghapus riwayat ini?")) {
+                    riwayat.splice(index, 1);
+                    localStorage.setItem(
+                        "riwayatGaji",
+                        JSON.stringify(riwayat)
+                    );
+                    renderRiwayat();
+                }
+            }
+
+            // Inisialisasi halaman
+            renderHari();
+            renderRiwayat();
+        </script>
+    </body>
+</html>
